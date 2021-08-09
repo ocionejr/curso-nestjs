@@ -10,10 +10,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBody, ApiProperty } from '@nestjs/swagger';
+import { DeleteResult } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task, TaskStatus } from './tasks.model';
+import { TaskStatus } from './task-status.enum';
+import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
@@ -21,35 +23,30 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  GetTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
-    if (Object.keys(filterDto).length) {
-      return this.tasksService.GetTasksWithFilters(filterDto);
-    } else {
-      return this.tasksService.GetAllTasks();
-    }
+  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto);
   }
 
   @Post()
-  CreateTask(@Body() task: CreateTaskDto) {
-    return this.tasksService.CreateTask(task);
+  createTask(@Body() task: CreateTaskDto): Promise<Task> {
+    return this.tasksService.createTask(task);
   }
 
   @Get(':idTask')
-  FindTaskById(@Param('idTask') idTask: string) {
-    const task: Task = this.tasksService.FindTaskById(idTask);
-    return task;
+  findTaskById(@Param('idTask') idTask: string): Promise<Task> {
+    return this.tasksService.findTaskById(idTask);
   }
 
   @Delete(':idTask')
-  DeleteTask(@Param('idTask') idTask: string) {
-    this.tasksService.DeleteTaskById(idTask);
+  deleteTask(@Param('idTask') idTask: string): Promise<void> {
+    return this.tasksService.deleteTaskById(idTask);
   }
 
   @Patch(':idTask/status')
-  UpdateTaskStatus(
+  updateTaskStatus(
     @Param('idTask') idTask: string,
     @Body() status: UpdateTaskDto,
-  ) {
-    return this.tasksService.UpdateTaskStatus(idTask, status);
+  ): Promise<Task> {
+    return this.tasksService.updateTaskStatus(idTask, status);
   }
 }
