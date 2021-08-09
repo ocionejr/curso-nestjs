@@ -52,8 +52,7 @@ export class TasksService {
   public FindTaskById(id: string): Task {
     const task = this.tasks.find((item) => item.id === id);
 
-    if (task == null)
-      throw new NotFoundException('Não existe task com esse id');
+    if (!task) throw new NotFoundException('Não existe task com esse id');
 
     return task;
   }
@@ -67,10 +66,6 @@ export class TasksService {
     console.log('taskStatus', taskStatus);
     console.log('id', id);
     const task = this.FindTaskById(id);
-
-    if (TaskStatus[taskStatus.status] == null)
-      throw new NotFoundException('Não existe esse status');
-
     task.status = taskStatus.status;
 
     return task;
