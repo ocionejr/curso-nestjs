@@ -3,22 +3,24 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiProperty } from '@nestjs/swagger';
-import { DeleteResult } from 'typeorm';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { TaskStatus } from './task-status.enum';
 import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 
+@ApiBearerAuth()
 @Controller('tasks')
+@UseGuards(AuthGuard())
+@ApiTags('Tasks')
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
