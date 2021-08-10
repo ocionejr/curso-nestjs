@@ -19,6 +19,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @ApiBearerAuth()
 @Controller('tasks')
