@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -25,30 +27,43 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.tasksService.getTasks(filterDto);
+  getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUser() user: User,
+  ): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto, user);
   }
 
   @Post()
-  createTask(@Body() task: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(task);
+  createTask(
+    @Body() task: CreateTaskDto,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return this.tasksService.createTask(task, user);
   }
 
   @Get(':idTask')
-  findTaskById(@Param('idTask') idTask: string): Promise<Task> {
-    return this.tasksService.findTaskById(idTask);
+  findTaskById(
+    @Param('idTask') idTask: string,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return this.tasksService.findTaskById(idTask, user);
   }
 
   @Delete(':idTask')
-  deleteTask(@Param('idTask') idTask: string): Promise<void> {
-    return this.tasksService.deleteTaskById(idTask);
+  deleteTask(
+    @Param('idTask') idTask: string,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.tasksService.deleteTaskById(idTask, user);
   }
 
   @Patch(':idTask/status')
   updateTaskStatus(
     @Param('idTask') idTask: string,
     @Body() status: UpdateTaskDto,
+    @GetUser() user: User,
   ): Promise<Task> {
-    return this.tasksService.updateTaskStatus(idTask, status);
+    return this.tasksService.updateTaskStatus(idTask, status, user);
   }
 }
